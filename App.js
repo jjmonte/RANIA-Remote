@@ -1,10 +1,9 @@
 import React, { useState, useEffect, Component } from 'react';
- 
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { AppLoading } from 'expo';
 import Constants from 'expo-constants';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faAddressBook, faCalendarDay, faPhone, faPhoneSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faCalendarDay, faCog, faPhone, faPhoneSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
 import {
   useFonts,
   Merriweather_300Light,
@@ -16,6 +15,9 @@ import {
   Merriweather_900Black,
   Merriweather_900Black_Italic,
 } from '@expo-google-fonts/merriweather';
+
+import { ContactList } from './Contacts.component';
+import global from './global';
  
 export default () => {
   let [fontsLoaded] = useFonts({
@@ -46,9 +48,10 @@ export default () => {
     render() {
       return (
         <View style={styles.TitleBar}>
-          <TouchableOpacity><FontAwesomeIcon icon = {faAddressBook} color={'#257933'} /></TouchableOpacity>
+          <TouchableOpacity onPress={ this.props.onPress }><FontAwesomeIcon icon = {faCog} color={'#257933'}/></TouchableOpacity>
           <MyText>RANIA Remote</MyText>
-          <TouchableOpacity onPress={ this.props.onPress }><FontAwesomeIcon icon = {faPhone} color={'#257933'}/></TouchableOpacity>
+          <TouchableOpacity><FontAwesomeIcon icon = {faAddressBook} color={'#257933'} /></TouchableOpacity>
+          
         </View>
       );
     }
@@ -71,11 +74,9 @@ export default () => {
       <View style={styles.container}>
         <View style={styles.statusBar}/>
         <TitleBar onPress={this.onPress}>{this.state.userName}</TitleBar>
-        {/* <TouchableOpacity
-           style={styles.button}
-          >
-            <Text>You have { this.state.dummy } tasks!</Text>
-          </TouchableOpacity> */}
+        
+        <ContactList />
+
       </View>
     )
     }
@@ -107,12 +108,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: "#f0f0ea",
     padding: 15,
-  
   },
   button: {
     alignItems: 'center',
     backgroundColor: '#fff3b3',
     padding: 5,
     marginBottom: 10
+  },
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    alignSelf: 'center'
   }
 })
