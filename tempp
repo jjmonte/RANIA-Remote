@@ -1,0 +1,169 @@
+import React, { useState, useEffect, Component, Map } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPhone, faPen } from '@fortawesome/free-solid-svg-icons';
+
+import MyText from './App';
+
+// import * as GLOBAL from './global';
+
+const DATA = [
+    {
+        title: "E",
+        data: ["Evan Lupfer"]
+    },
+    {
+        title: "J",
+        data: ["Jared Knouse", "Jade Montesano"]
+    },
+    {
+        title: "N",
+        data: ["Nate Durst"]
+    },
+    {
+        title: "S",
+        data: ["Sam Rydzynski"]
+    }
+];
+
+
+class RowItem extends Component {
+
+    // state = {
+    //     selected: false,
+    //     contact: null,
+    // }
+
+    // selectStyle = function(contact) {
+    //     if (this.state.selected == true) {
+    //         return {
+    //             backgroundColor: '#C8F5FF'
+    //         }
+    //     }
+    //     else return {
+    //         backgroundColor: 'white'
+    //     }  
+    // }
+
+    // onPress = (contact) => {
+    //     if (this.state.selected == false) {
+    //         this.setState({
+    //             selected: true,
+    //         })
+    //     }
+    //     else {
+    //         this.setState({
+    //         selected: false
+    //     })}
+    // }
+
+    render() {
+        return(
+            <View>
+                <TouchableOpacity onPress={this.props.onPress}>
+                    <Text style={styles.item}>{this.props.children}</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+}
+    
+
+
+export class ContactList extends Component {
+    state = {
+        selected: null
+    }
+
+    onPressAction = (key) => {
+        if (this.state.selected == key) {
+            this.setState({
+                selected: null
+            })
+        }
+        else this.setState({
+            selected: key
+        });
+          return {selected};
+    };
+
+    selectStyle = (key) => {
+        if (this.state.selected == key) {
+            return {
+                backgroundColor: '#C8F5FF'
+            }
+        }
+        else return {
+            backgroundColor: 'white'
+        }  
+    };
+
+    renderRow = (item) => {
+        return (
+            <RowItem
+              item={item}
+              onPressItem={this.onPressAction}
+              style={this.selectStyle}
+              selected={!!(this.state.selected == item.key)}>{item}</RowItem>
+        );
+    }
+
+    render() {
+        return (
+            <View>
+                <Text style={styles.listHeader}>― Contact List ―</Text>
+                <View style={styles.listBox}>
+                    <SectionList sections={DATA}
+                        renderItem={({item}) => (this.renderRow(item))} 
+                        renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+                        keyExtractor={(item, index) => item + index}
+                        extraData={this.state} />
+                </View>
+            </View>
+        )
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    listHeader: {
+        alignSelf: 'center',
+        fontSize: 18,
+        fontFamily: 'Merriweather_700Bold',
+        padding: 10
+    },
+    listBox: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        width: '100%',
+    },
+    sectionHeader: {
+        paddingTop: 2,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingBottom: 2,
+        fontSize: 14,
+        fontFamily: 'Merriweather_700Bold',
+        backgroundColor: '#f0f0ea',
+        color: 'black'
+    },
+    item: {
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+        fontFamily: 'Merriweather_400Regular',
+        color: "#257933",
+        borderBottomWidth: 1,
+        borderColor: '#f0f0ea',
+        
+        
+    },
+    select: {
+
+    }
+  })
+
+  export default ContactList;

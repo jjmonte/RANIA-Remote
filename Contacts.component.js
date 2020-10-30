@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, Map } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPhone, faPen } from '@fortawesome/free-solid-svg-icons';
@@ -7,67 +7,104 @@ import MyText from './App';
 
 // import * as GLOBAL from './global';
 
-class Item extends Component {
-
-    state = {
-        selected: false,
-        contact: null,
+const DATA = [
+    {
+        title: "E",
+        data: ["Evan Lupfer"]
+    },
+    {
+        title: "J",
+        data: ["Jared Knouse", "Jade Montesano"]
+    },
+    {
+        title: "N",
+        data: ["Nate Durst"]
+    },
+    {
+        title: "S",
+        data: ["Sam Rydzynski"]
     }
+];
 
-    selectStyle = function(contact) {
-        if (this.state.selected == true) {
-            return {
-                backgroundColor: '#C8F5FF'
-            }
-        }
-        else return {
-            backgroundColor: 'white'
-        }  
-    }
+const Item = ({ item, onPress, style }) => (
+    <TouchableOpacity onPress={onPress} style={style}>
+        <Text style={styles.item}>{item}</Text>
+    </TouchableOpacity>
+);
 
-    onPress = (contact) => {
-        if (this.state.selected == false) {
-            this.setState({
-                selected: true,
-            })
-        }
-        else {
-            this.setState({
-            selected: false
-        })}
-    }
+const ContactList = () => {
+    const [selected, setSelected] = useState(null);
 
-    render() {
-        return(
-            <View>
-                <TouchableOpacity onPress={this.onPress} style={this.selectStyle()}>
-                    <Text style={styles.item}>{this.props.children}</Text>
-                </TouchableOpacity>
-            </View>
-        )
-    }
-}
-    
+    const renderItem = ({ item }) => {
+        const backgroundColor = item === selected ? "#C8F5FF" : "white";
 
-
-export class ContactList extends Component {
-    state = {
-        selection: false
-    }
-
-    render() {
         return (
-            <View>
-                <Text style={styles.listHeader}>― Contact List ―</Text>
-                <View style={styles.listBox}>
-                    <SectionList sections={[ {title: 'A', data: ['Aaron', 'Amy']}, {title: 'J', data: ['Jade', 'Jared']} ]} renderItem={({item}) => <Item>{item}</Item>} 
-                        renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-                        keyExtractor={(item, index) => item + index} />
-                </View>
+            <Item
+              item={item}
+              onPress={() => setSelected(item)}
+              style={{ backgroundColor }}/>
+        );
+    };
+
+    return (
+        <View>
+            <Text style={styles.listHeader}>― Contact List ―</Text>
+            <View style={styles.listBox}>
+                <SectionList sections={DATA}
+                renderItem={renderItem} 
+                renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+                keyExtractor={(item) => item}
+                extraData={selected} />
             </View>
-        )
-    }
-}
+        </View>
+      );
+};
+
+
+// export class ContactList extends Component {
+//     constructor(props) {
+//         super(props)
+//         this.state = {
+//             selected: null,
+//             setSelected: null
+//         }
+//     }
+
+//     onPressAction = (item) => {
+//         this.setState({setSelected: item})
+//     };
+
+    
+//     selectStyle = (item) => {
+//         // return backgroundColor = item === selected ? "#6e3b6e" : "#f9c2ff";
+//         if (this.state.setSelected == item) {
+//             return {
+//                 backgroundColor: '#C8F5FF'
+//             }
+//         }
+//         else return {
+//             backgroundColor: 'white'
+//         }  
+//     };
+
+//     renderItem = (item) => {
+//         // backgroundColor = () => {
+//         //     item === this.state.selected ? "#6e3b6e" : "#f9c2ff";
+//         // }
+//         return (
+//             <Item
+//               item={item}
+//               onPress={() => setSelect(item)}
+//               style={backgroundColor}>{item}</Item>
+//         );
+//     }
+
+//     render() {
+//         return (
+            
+//         )
+//     }
+// }
 
 const styles = StyleSheet.create({
     container: {
@@ -111,4 +148,4 @@ const styles = StyleSheet.create({
     }
   })
 
-  export default ContactList;
+  export { ContactList };

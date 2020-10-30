@@ -16,7 +16,7 @@ import {
   Merriweather_900Black_Italic,
 } from '@expo-google-fonts/merriweather';
 
-import { ContactList } from './Contacts.component';
+import { ContactList } from './Contacts.component.js';
 import global from './global';
  
 export default () => {
