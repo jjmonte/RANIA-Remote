@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
+import React, { useState, useEffect, useRef, Component, forwardRef } from 'react';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPhone, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPen, faCheck, faOutdent } from '@fortawesome/free-solid-svg-icons';
 
 import MyText from './App';
 
@@ -26,24 +26,84 @@ const DATA = [
     }
 ];
 
-const Item = ({ item, onPress, style }) => (
-    <TouchableOpacity onPress={onPress} style={style}>
-        <Text style={styles.item}>{item}</Text>
-    </TouchableOpacity>
+const Item = ({ item, onPress, style, showOptions, disableTouch, optionEdit, optionCall }) => (
+    <View style={styles.container}>
+        <View style={style}>
+            <View style={styles.itemContainer}>
+                <Text onPress={onPress} style={styles.item}>
+                    {item}
+                </Text>
+                <View style={styles.optionsContainer}>
+                    <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionEdit}>
+                        <FontAwesomeIcon size={20} icon={faPen} style={styles.options} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionCall}>
+                        <FontAwesomeIcon size={20} icon={faPhone} style={styles.options} />
+                    </TouchableOpacity>
+                </View>
+
+            </View>
+        </View>
+
+
+    </View>
 );
+
+const EditItem = forwardRef(({ item, onPress, style, showOptions, disableTouch, optionEdit, optionCall, ref }) => (
+
+    <View style={styles.container}>
+        <View style={style}>
+            <View style={styles.itemContainer}>
+                <TextInput ref={ref} autoFocus={true} editable={true} selectTextOnFocus={true} placeholder={item} style={styles.itemEdit} />
+                <View style={styles.optionsContainer}>
+                    <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionEdit}>
+                        <FontAwesomeIcon size={20} icon={faCheck} style={styles.options} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionCall}>
+                        <FontAwesomeIcon size={20} icon={faPhone} style={styles.options} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    </View>
+));
 
 const ContactList = () => {
     const [selected, setSelected] = useState(null);
+    const [editing, setEditing] = useState(null);
+    const focusRef = useRef(null);
 
     const renderItem = ({ item }) => {
-        const backgroundColor = item === selected ? "#C8F5FF" : "white";
+        const backgroundColor = item === selected ? "#C8F5FF" : "white";    // highlight color
+        const opacity = item === selected ? 100 : 0;                        // display expanded options yes/no
+        const disabled = item === selected ? false : true;                  // disable touchableopacity of options
+        
+        if (editing === item && item === selected) {
+            return (
+                <EditItem
+                    ref={focusRef}
+                    item={item}
+                    // onPress={() => setSelected(item)}
+                    style={{ backgroundColor }}
+                    showOptions={{ opacity }}
+                    disableTouch={{ disabled }}
+                    optionEdit={() => setEditing(null)}/>
+            );
+        }
+        else if (editing !== item || item !== selected) {
+            return (
+                <Item
+                    item={item}
+                    onPress={() => {setSelected(item); setEditing(null)}}
+                    style={{ backgroundColor }}
+                    showOptions={{ opacity }}
+                    disableTouch={{ disabled }}
+                    optionEdit={() => {setEditing(item); () => focusRef.current.focus()}} />
+            );
+        }
 
-        return (
-            <Item
-              item={item}
-              onPress={() => setSelected(item)}
-              style={{ backgroundColor }}/>
-        );
     };
 
     return (
@@ -51,64 +111,23 @@ const ContactList = () => {
             <Text style={styles.listHeader}>― Contact List ―</Text>
             <View style={styles.listBox}>
                 <SectionList sections={DATA}
-                renderItem={renderItem} 
-                renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-                keyExtractor={(item) => item}
-                extraData={selected} />
+                    renderItem={renderItem}
+                    renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+                    keyExtractor={(item) => item}
+                    extraData={selected} />
             </View>
         </View>
-      );
+    );
 };
-
-
-// export class ContactList extends Component {
-//     constructor(props) {
-//         super(props)
-//         this.state = {
-//             selected: null,
-//             setSelected: null
-//         }
-//     }
-
-//     onPressAction = (item) => {
-//         this.setState({setSelected: item})
-//     };
-
-    
-//     selectStyle = (item) => {
-//         // return backgroundColor = item === selected ? "#6e3b6e" : "#f9c2ff";
-//         if (this.state.setSelected == item) {
-//             return {
-//                 backgroundColor: '#C8F5FF'
-//             }
-//         }
-//         else return {
-//             backgroundColor: 'white'
-//         }  
-//     };
-
-//     renderItem = (item) => {
-//         // backgroundColor = () => {
-//         //     item === this.state.selected ? "#6e3b6e" : "#f9c2ff";
-//         // }
-//         return (
-//             <Item
-//               item={item}
-//               onPress={() => setSelect(item)}
-//               style={backgroundColor}>{item}</Item>
-//         );
-//     }
-
-//     render() {
-//         return (
-            
-//         )
-//     }
-// }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1
+    },
+    itemContainer: {
+        flex: 1,
+        flexDirection: 'row',
+
     },
     listHeader: {
         alignSelf: 'center',
@@ -133,19 +152,44 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     item: {
+        flex: 1,
         padding: 10,
         fontSize: 18,
         height: 44,
         fontFamily: 'Merriweather_400Regular',
         color: "#257933",
         borderBottomWidth: 1,
-        borderColor: '#f0f0ea',
-        
-        
+        borderColor: '#f0f0ea'
+
     },
-    select: {
-
+    itemEdit: {
+        flex: 1,
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+        fontFamily: 'Merriweather_400Regular',
+        // color: "rgb(179, 179, 179)",
+        backgroundColor: 'white',
+        borderBottomWidth: 1,
+        borderColor: '#f0f0ea'
+    },
+    optionsContainer: {
+        flex: 1,
+        // height: '100%',
+        padding: 12,
+        flexDirection: 'row',
+        // float: 'right',
+        justifyContent: "flex-end",
+        zIndex: 1
+    },
+    options: {
+        flex: 1,
+        color: "#32a5f3",
+        paddingHorizontal: 12,
+        alignSelf: "flex-end",
+        zIndex: 1
+        // flexWrap: 'wrap'
     }
-  })
+})
 
-  export { ContactList };
+export { ContactList };
