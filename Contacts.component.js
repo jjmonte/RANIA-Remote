@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, Component, forwardRef } from 'react';
+import React, { useState, useRef, Component, forwardRef } from 'react';
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPhone, faPen, faCheck, faOutdent } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPen, faCheck, faOutdent, faPlusCircle, faPlusSquare, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 import MyText from './App';
 
@@ -50,8 +50,7 @@ const Item = ({ item, onPress, style, showOptions, disableTouch, optionEdit, opt
     </View>
 );
 
-const EditItem = forwardRef(({ item, onPress, style, showOptions, disableTouch, optionEdit, optionCall, ref }) => (
-
+const EditItem = forwardRef(({item, onPress, style, showOptions, disableTouch, optionEdit, optionCall, ref }) => (
     <View style={styles.container}>
         <View style={style}>
             <View style={styles.itemContainer}>
@@ -79,7 +78,7 @@ const ContactList = () => {
         const backgroundColor = item === selected ? "#C8F5FF" : "white";    // highlight color
         const opacity = item === selected ? 100 : 0;                        // display expanded options yes/no
         const disabled = item === selected ? false : true;                  // disable touchableopacity of options
-        
+
         if (editing === item && item === selected) {
             return (
                 <EditItem
@@ -100,12 +99,12 @@ const ContactList = () => {
                     style={{ backgroundColor }}
                     showOptions={{ opacity }}
                     disableTouch={{ disabled }}
-                    optionEdit={() => {setEditing(item); () => focusRef.current.focus()}} />
+                    optionEdit={() => {setEditing(item); () => focusRef.current.focus()}}/>
             );
         }
 
     };
-
+    
     return (
         <View>
             <Text style={styles.listHeader}>― Contact List ―</Text>
@@ -114,18 +113,21 @@ const ContactList = () => {
                     renderItem={renderItem}
                     renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
                     keyExtractor={(item) => item}
-                    extraData={selected} />
+                    extraData={selected}/>
             </View>
         </View>
+        
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        borderBottomWidth: 1,
+        borderColor: '#f0f0ea'
     },
     itemContainer: {
-        flex: 1,
+        // flex: 1,
         flexDirection: 'row',
 
     },
@@ -152,26 +154,22 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     item: {
-        flex: 1,
+        // flex: 1,
         padding: 10,
         fontSize: 18,
         height: 44,
         fontFamily: 'Merriweather_400Regular',
         color: "#257933",
-        borderBottomWidth: 1,
-        borderColor: '#f0f0ea'
 
     },
     itemEdit: {
-        flex: 1,
+        // flex: 1,
         padding: 10,
         fontSize: 18,
         height: 44,
         fontFamily: 'Merriweather_400Regular',
         // color: "rgb(179, 179, 179)",
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderColor: '#f0f0ea'
+        backgroundColor: 'white'
     },
     optionsContainer: {
         flex: 1,
@@ -180,14 +178,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         // float: 'right',
         justifyContent: "flex-end",
-        zIndex: 1
+        // zIndex: 1
     },
     options: {
-        flex: 1,
+        // flex: 1,
         color: "#32a5f3",
         paddingHorizontal: 12,
         alignSelf: "flex-end",
-        zIndex: 1
+        // zIndex: 1
         // flexWrap: 'wrap'
     }
 })
