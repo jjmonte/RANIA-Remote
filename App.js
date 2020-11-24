@@ -78,25 +78,44 @@ export default () => {
     const [currentScreen, setCurrentScreen] = useState("settings");       // which app screen is open?  settings, contacts, call
     const [activeCall, setActiveCall] = useState(null);                   // is there an active call? (may not be used)
     const [dyslexic, setDyslexic] = useState(false);                      // dyslexia friendly font ADA Compliant
-    const [contactsList, setContactsList] = useState(null);               // high contrast dark mode ADA Compliant
+    const [contactsList, setContactsList] = useState(null);
+    const [darkMode, setDarkMode] = useState(1);                      // high contrast dark mode ADA Compliant
 
-    const [darkMode, setDarkMode] = useState(false);
+    // BEGIN DARK MODE COLOR SELECTORS, USING TERNARY OPS
     const colorsBG = darkMode ? '#181818' : '#ffffff';
     const colorsMono = darkMode ? '#ffffff' : '#000000';
     const colorsAccent = darkMode ? '#36B048' : '#257933';
     const colorsTitle = darkMode ? '#323232' : '#f0f0ea';
+    const colorsBorder = darkMode ? '#323232' : '#f0f0ea';
+    const colorsItemText = darkMode ? '#ffffff' : '#257933';
+    const colorsItemSelect = darkMode ? '#1D5D27' : '#C8F5FF';
+    const colorsItemOptions = darkMode ? '#ffffff' : '#32a5f3';
+    // END DARK MODE COLOR SELECTORS
+
     const styleExtra = {
       accent: {
         backgroundColor: colorsBG,
-        color: colorsAccent
+        color: colorsAccent,
+        borderColor: colorsBorder
       },
       mono: {
         backgroundColor: colorsBG,
         color: colorsMono,
+        borderColor: colorsBorder
       },
       title: {
         backgroundColor: colorsTitle,
-        color: colorsAccent
+        color: colorsAccent,
+        borderColor: colorsBorder
+      },
+      item: {
+        color: colorsItemText
+      },
+      itemSelect: {
+        backgroundColor: colorsItemSelect
+      },
+      itemOptions: {
+        color: colorsItemOptions
       }
     }
 
@@ -119,11 +138,11 @@ export default () => {
     return (
       <View style={[styles.container, styleExtra.accent]}>
         <View style={styles.statusBar} />
-        <TitleBar colorMode={colorsAccent} styleExtra={styleExtra} 
-        appState={currentScreen} onPress={onPress} extraData={darkMode} />
-        <Settings userMode={userMode} styleExtra={styleExtra} 
-        setUserMode={() => setUserMode(!userMode)} darkMode={darkMode} setDarkMode={() => setDarkMode(!darkMode)} />
-        {/* <ContactList /> */}
+        <TitleBar colorMode={colorsAccent} styleExtra={styleExtra}
+          appState={currentScreen} onPress={onPress} extraData={darkMode} />
+        {/* <Settings userMode={userMode} styleExtra={styleExtra} 
+        setUserMode={() => setUserMode(!userMode)} darkMode={darkMode} setDarkMode={() => setDarkMode(!darkMode)} /> */}
+        <ContactList styleExtra={styleExtra} />
         {/* <Call /> */}
       </View>
     )
@@ -161,12 +180,6 @@ const styles = StyleSheet.create({
     color: '#257933',
     padding: 18
   },
-  // button: {
-  //   alignItems: 'center',
-  //   backgroundColor: '#fff3b3',
-  //   padding: 5,
-  //   marginBottom: 10
-  // },
   header: {
     flex: 1,
     flexDirection: 'row',

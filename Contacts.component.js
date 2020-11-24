@@ -26,20 +26,20 @@ const DATA = [
     }
 ];
 
-const Item = ({ item, onPress, style, showOptions, disableTouch, optionEdit, optionCall }) => (
-    <View style={styles.container}>
+const Item = ({ item, onPress, style, showOptions, disableTouch, optionEdit, optionCall, styleExtra }) => (
+    <View style={[styles.container, styleExtra.mono]}>
         <View style={style}>
             <View style={styles.itemContainer}>
-                <Text onPress={onPress} style={styles.item}>
+                <Text onPress={onPress} style={[styles.item, styleExtra.item]}>
                     {item}
                 </Text>
                 <View style={styles.optionsContainer}>
                     <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionEdit}>
-                        <FontAwesomeIcon size={20} icon={faPen} style={styles.options} />
+                        <FontAwesomeIcon size={20} icon={faPen} style={[styles.options, styleExtra.itemOptions]} />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionCall}>
-                        <FontAwesomeIcon size={20} icon={faPhone} style={styles.options} />
+                        <FontAwesomeIcon size={20} icon={faPhone} style={[styles.options, styleExtra.itemOptions]} />
                     </TouchableOpacity>
                 </View>
 
@@ -50,18 +50,18 @@ const Item = ({ item, onPress, style, showOptions, disableTouch, optionEdit, opt
     </View>
 );
 
-const EditItem = forwardRef(({item, onPress, style, showOptions, disableTouch, optionEdit, optionCall, ref }) => (
+const EditItem = forwardRef(({item, styleExtra, onPress, style, showOptions, disableTouch, optionEdit, optionCall, ref }) => (
     <View style={styles.container}>
         <View style={style}>
             <View style={styles.itemContainer}>
                 <TextInput ref={ref} autoFocus={true} editable={true} selectTextOnFocus={true} placeholder={item} style={styles.itemEdit} />
                 <View style={styles.optionsContainer}>
                     <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionEdit}>
-                        <FontAwesomeIcon size={20} icon={faCheck} style={styles.options} />
+                        <FontAwesomeIcon size={20} icon={faCheck} style={[styles.options, styleExtra.itemOptions]} />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={showOptions} disabled={!disableTouch} onPress={optionCall}>
-                        <FontAwesomeIcon size={20} icon={faPhone} style={styles.options} />
+                        <FontAwesomeIcon size={20} icon={faPhone} style={[styles.options, styleExtra.itemOptions]} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -69,13 +69,13 @@ const EditItem = forwardRef(({item, onPress, style, showOptions, disableTouch, o
     </View>
 ));
 
-const ContactList = () => {
+const ContactList = ({styleExtra}) => {
     const [selected, setSelected] = useState(null);
     const [editing, setEditing] = useState(null);
     const focusRef = useRef(null);
 
     const renderItem = ({ item }) => {
-        const backgroundColor = item === selected ? "#C8F5FF" : "white";    // highlight color
+        const background = item === selected ? styleExtra.itemSelect : styleExtra.mono;    // highlight color
         const opacity = item === selected ? 100 : 0;                        // display expanded options yes/no
         const disabled = item === selected ? false : true;                  // disable touchableopacity of options
 
@@ -84,8 +84,9 @@ const ContactList = () => {
                 <EditItem
                     ref={focusRef}
                     item={item}
+                    styleExtra={styleExtra}
                     // onPress={() => setSelected(item)}
-                    style={{ backgroundColor }}
+                    style={ background }
                     showOptions={{ opacity }}
                     disableTouch={{ disabled }}
                     optionEdit={() => setEditing(null)}/>
@@ -95,8 +96,9 @@ const ContactList = () => {
             return (
                 <Item
                     item={item}
+                    styleExtra={styleExtra}
                     onPress={() => {setSelected(item); setEditing(null)}}
-                    style={{ backgroundColor }}
+                    style={ background }
                     showOptions={{ opacity }}
                     disableTouch={{ disabled }}
                     optionEdit={() => {setEditing(item); () => focusRef.current.focus()}}/>
@@ -107,11 +109,11 @@ const ContactList = () => {
     
     return (
         <View>
-            <Text style={styles.listHeader}>― Contact List ―</Text>
+            <Text style={[styles.listHeader, styleExtra.mono]}>― Contact List ―</Text>
             <View style={styles.listBox}>
                 <SectionList sections={DATA}
                     renderItem={renderItem}
-                    renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+                    renderSectionHeader={({ section }) => <Text style={[styles.sectionHeader, styleExtra.title]}>{section.title}</Text>}
                     keyExtractor={(item) => item}
                     extraData={selected}/>
             </View>
