@@ -1,7 +1,7 @@
 import React, { useState, useRef, Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
-const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode }) => {
+const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode, highVisFonts, setHighVisFonts }) => {
 
     // const [darkEnabled, setDarkEnabled] = useState(false);
     const [fontsEnabled, setFontsEnabled] = useState(false);
@@ -38,13 +38,13 @@ const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode }) 
                     />
                 </View>
                 <View style={[styles.setting, styleExtra.accent]}>
-                    <Text style={[styles.label, styleExtra.mono]}>Improve Text Readability</Text>
+                    <Text style={[styles.label, styleExtra.mono]}>Improve Text Visibility</Text>
                     <Switch
                         trackColor={{ false: "#767577", true: "#f0f0ea" }}
                         thumbColor={fontsEnabled ? "#257933" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleFonts}
-                        value={fontsEnabled}
+                        onValueChange={setHighVisFonts}
+                        value={highVisFonts}
                     />
                 </View>
             </View>
@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
     header: {
         alignSelf: 'center',
         fontSize: 18,
-        fontFamily: 'Merriweather_700Bold',
+        fontFamily: 'Merriweather_400Regular',
+        fontWeight: 'bold',
         color: '#000000',
         padding: 10
     },

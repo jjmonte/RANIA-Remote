@@ -3,8 +3,6 @@ import { Text, TextInput, View, StyleSheet, TouchableOpacity, SectionList } from
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPhone, faPen, faCheck, faOutdent, faPlusCircle, faPlusSquare, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
-import MyText from './App';
-
 // import * as GLOBAL from './global';
 
 const DATA = [
@@ -136,7 +134,8 @@ const styles = StyleSheet.create({
     listHeader: {
         alignSelf: 'center',
         fontSize: 18,
-        fontFamily: 'Merriweather_700Bold',
+        fontFamily: 'Merriweather_400Regular',
+        fontWeight: 'heavy',
         padding: 10
     },
     listBox: {
@@ -151,7 +150,8 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingBottom: 2,
         fontSize: 14,
-        fontFamily: 'Merriweather_700Bold',
+        fontFamily: 'Merriweather_400Regular',
+        fontWeight: 'heavy',
         backgroundColor: '#f0f0ea',
         color: 'black'
     },
