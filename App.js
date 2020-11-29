@@ -1,9 +1,10 @@
-import React, { useState, Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { AppLoading } from 'expo';
 import Constants from 'expo-constants';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faAddressBook, faBackward, faCalendarDay, faCog, faExclamationCircle, faLongArrowAltLeft, faPhone, faPhoneSquare, faPlus, faSave, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faCog, faExclamationTriangle, faLongArrowAltLeft, faSave, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { addContact, contactsData, removeContact } from './Storage.js';
 
 import {
   useFonts,
@@ -19,9 +20,8 @@ import {
 
 import { ContactList } from './Contacts.component.js';
 import { Settings } from './Settings.component.js';
-// import { currentScreen } from './global.js';
-
-// // import GLOBAL from './global';
+import { Call } from './Call.component.js';
+import { Emergency } from './Emergency.component.js';
 
 export default () => {
   let [fontsLoaded] = useFonts({
@@ -35,17 +35,22 @@ export default () => {
     Merriweather_900Black_Italic,
   });
 
+  //                                             // FOR DEMO
+  // LogBox.ignoreLogs(['Warning: ...']);        // Ignore log notification by message
+  // LogBox.ignoreAllLogs();                     // Ignore all log notifications
+
   let fontSize = 24;
   let paddingVertical = 6;
 
-  const TitleBar = ({ colorMode, fontMode, styleExtra, onPress, appState }) => {
-
+  const TitleBar = ({ colorMode, fontMode, styleExtra, onPress, appState, newContactOnPress }) => {
+    // TOP BAR / TITLE BAR / NAV BAR
+    // PERSISTS ON ALL VIEWS OF APP + CONTAINS ICONS TO NAVIGATE VARIOUS APP SCREENS
     if (appState == "contacts") {
       return (
         <View style={[styles.titleBar, styleExtra.title]}>
           <TouchableOpacity onPress={onPress.settings}><FontAwesomeIcon icon={faCog} color={colorMode} /></TouchableOpacity>
           <Text style={[styles.title, styleExtra.title]}>RANIA Remote</Text>
-          <TouchableOpacity><FontAwesomeIcon icon={faUserPlus} color={colorMode} /></TouchableOpacity>
+          <TouchableOpacity onPress={newContactOnPress}><FontAwesomeIcon icon={faUserPlus} color={colorMode} /></TouchableOpacity>
         </View>
       );
     }
@@ -61,9 +66,18 @@ export default () => {
     else if (appState == "call") {
       return (
         <View style={[styles.titleBar, styleExtra.title]}>
-          <TouchableOpacity><FontAwesomeIcon icon={faLongArrowAltLeft} color={colorMode} /></TouchableOpacity>
+          <TouchableOpacity onPress={onPress.contacts}><FontAwesomeIcon icon={faLongArrowAltLeft} color={colorMode} /></TouchableOpacity>
           <Text style={[styles.title, styleExtra.title]}>RANIA Remote</Text>
-          <TouchableOpacity><FontAwesomeIcon icon={faExclamationCircle} color={colorMode} /></TouchableOpacity>
+          <TouchableOpacity onPress={onPress.emergency}><FontAwesomeIcon icon={faExclamationTriangle} color={'#C54E3E'} /></TouchableOpacity>
+        </View>
+      );
+    }
+    else if (appState == "emergency") {
+      return (
+        <View style={[styles.titleBar, styleExtra.title]}>
+          <TouchableOpacity onPress={onPress.contacts}><FontAwesomeIcon icon={faLongArrowAltLeft} color={colorMode} /></TouchableOpacity>
+          <Text style={[styles.title, styleExtra.title]}>RANIA Remote</Text>
+          <TouchableOpacity><FontAwesomeIcon /></TouchableOpacity>
         </View>
       );
     }
@@ -71,14 +85,17 @@ export default () => {
 
   const App = () => {
 
-    const [dummy, setDummy] = useState(null);
-    const [userMode, setUserMode] = useState(false);                      // false = visitor
-    const [currentScreen, setCurrentScreen] = useState("settings");       // which app screen is open?  settings, contacts, call
+    const [userMode, setUserMode] = useState(1);                      // 0 = visitor
+    const [currentScreen, setCurrentScreen] = useState("call");      // which app screen is open?  settings, contacts, call
     const [activeCall, setActiveCall] = useState(null);                   // is there an active call? (may not be used)
     const [highVisFonts, setHighVisFonts] = useState(false);              // toggle high visibility fonts
-    const [contactsList, setContactsList] = useState(null);   
-    const [darkMode, setDarkMode] = useState(false);                          // high contrast dark mode ADA Compliant
 
+    const [contacts, setContacts] = useState(contactsData);
+    const [newName, setNewName] = useState(null);
+    const [oldName, setOldName] = useState(null);
+    const [refresh, setRefresh] = useState(0);
+
+    const [darkMode, setDarkMode] = useState(false);                       // high contrast dark mode ADA Compliant
 
     // BEGIN VARIABLE STYLING --------------------------------
     // DARK MODE COLOR SELECTORS, USING TERNARY OPS
@@ -87,13 +104,12 @@ export default () => {
     const colorsAccent = darkMode ? '#36B048' : '#257933';
     const colorsTitle = darkMode ? '#323232' : '#f0f0ea';
     const colorsBorder = darkMode ? '#323232' : '#f0f0ea';
-    const colorsItemText = darkMode ? '#ffffff' : '#257933';
+    const colorsItemText = darkMode ? '#ffffff' : '#000000';
     const colorsItemSelect = darkMode ? '#1D5D27' : '#C8F5FF';
     const colorsItemOptions = darkMode ? '#ffffff' : '#32a5f3';
 
     // HIGH VIS FONT SELECTOR
     const fontModeFamily = highVisFonts ? 'HelveticaNeue-Bold' : 'Merriweather_400Regular';
-
     const styleExtra = {
       accent: {
         backgroundColor: colorsBG,
@@ -130,34 +146,86 @@ export default () => {
 
     const onPress = {
       contacts: () => setCurrentScreen('contacts'),
-      settings: () => setCurrentScreen('settings')
+      settings: () => setCurrentScreen('settings'),
+      call: () => setCurrentScreen('call'),
+      emergency: () => setCurrentScreen('emergency')
     };
+
+    const handleCallback = (childData) => {
+      setContacts(childData);
+    }
+
+    const handleOnChangeEdit = (text) => {
+      setNewName(text);
+    }
+
+    const cancelEdit = () => {
+      setNewName(null);
+    }
+
+    const saveEdit = () => {
+      if (newName == null) {
+        cancelEdit();
+      }
+      else {
+        addContact(newName);
+        console.log(oldName);
+        removeContact(oldName);
+      }
+    }
+
+    const createContact = () => {
+      const newName = ["New Contact"];
+      const newContact = { title: "Z", data: newName };
+
+      var contactsArr = contacts;
+      contactsArr.push(newContact);
+      console.log(contactsArr);
+      setRefresh(!refresh);
+      setContacts(contactsArr);
+    }
 
     if (currentScreen == 'contacts') {
       return (
         <View style={[styles.container, styleExtra.accent]}>
-          <View style={styles.statusBar} />
+          <View style={[styles.statusBar, styleExtra.title]} />
           <TitleBar colorMode={colorsAccent} styleExtra={styleExtra}
-            appState={currentScreen} onPress={onPress} extraData={darkMode} />
-          {/* <Settings userMode={userMode} styleExtra={styleExtra} 
-      setUserMode={() => setUserMode(!userMode)} darkMode={darkMode} setDarkMode={() => setDarkMode(!darkMode)} /> */}
-          <ContactList styleExtra={styleExtra} />
-          {/* <Call /> */}
+            appState={currentScreen} onPress={onPress} extraData={darkMode} newContactOnPress={createContact} />
+          <ContactList onPressCall={onPress} setOldName={setOldName} styleExtra={styleExtra} parentCallback={handleCallback} contactOnChange={handleOnChangeEdit}
+            cancelEditContact={cancelEdit} refresh={refresh} saveEditContact={saveEdit} contactsList={contacts} />
         </View>
       )
     }
     if (currentScreen == 'settings') {
       return (
         <View style={[styles.container, styleExtra.accent]}>
-          <View style={styles.statusBar} />
+          <View style={[styles.statusBar, styleExtra.title]} />
           <TitleBar colorMode={colorsAccent} styleExtra={styleExtra}
             appState={currentScreen} onPress={onPress} extraData={darkMode} />
-          <Settings userMode={userMode} styleExtra={styleExtra} 
-            setUserMode={() => setUserMode(!userMode)} darkMode={darkMode} setDarkMode={() => setDarkMode(!darkMode)} 
+          <Settings userMode={userMode} styleExtra={styleExtra}
+            setUserMode={() => setUserMode(!userMode)} darkMode={darkMode} setDarkMode={() => setDarkMode(!darkMode)}
             highVisFonts={highVisFonts} setHighVisFonts={() => setHighVisFonts(!highVisFonts)}
           />
-          {/* <ContactList styleExtra={styleExtra} /> */}
-          {/* <Call /> */}
+        </View>
+      )
+    }
+    if (currentScreen == 'call') {
+      return (
+        <View style={[styles.container, styleExtra.accent]}>
+          <View style={[styles.statusBar, styleExtra.title]} />
+          <TitleBar colorMode={colorsAccent} styleExtra={styleExtra}
+            appState={currentScreen} onPress={onPress} extraData={darkMode} />
+          <Call userMode={userMode} styleExtra={styleExtra} />
+        </View>
+      )
+    }
+    if (currentScreen == 'emergency') {
+      return (
+        <View style={[styles.container, styleExtra.accent]}>
+          <View style={[styles.statusBar, styleExtra.title]} />
+          <TitleBar colorMode={colorsAccent} styleExtra={styleExtra}
+            appState={currentScreen} onPress={onPress} extraData={darkMode} />
+          <Emergency styleExtra={styleExtra} />
         </View>
       )
     }
@@ -177,6 +245,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignContent: "center",
+    // backgroundColor: 'red'
+    // height: '00%'
   },
   title: {
     fontFamily: 'Merriweather_400Regular',
@@ -184,7 +254,7 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   statusBar: {
-    backgroundColor: '#f0f0ea',
+    // backgroundColor: '#f0f0ea',
     height: Constants.statusBarHeight
   },
   titleBar: {
