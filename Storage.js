@@ -3,6 +3,15 @@
 //
 // THANK YOU, GOODNIGHT!
 
+
+// THIS FILE HOUSES THE DEFAULT CONTACTS LIST (contactsData[])
+// AS WELL AS HELPER FUNCTIONS TO ADD AND REMOVE CONTACTS (and Edit)
+// _EDITING_ A CONTACT _REMOVES_ THE ORIGINAL CONTACT AND _ADDS_ A NEW ONE OF THE CHOSEN NAME
+//
+// I HAVE DECIDED TO NOT ALLOW THE USER DIRECT ACCESS TO THE 'REMOVE CONTACT' FUNCTION AT THIS TIME
+// THIS IS BECAUSE LESS TECH-SAVVY USERS MAY ACCIDENTALLY DELETE A CONTACT
+// IN A LATER RELEASE, THIS CAN BE REMEDIED BY SHOWING CONFIRMATION MODALS OR SIMPLY HIDING THE FUNCTION FROM 'VISITEE' MODE
+
 var contactsData = [
     {
         title: 'E',
@@ -23,7 +32,7 @@ var contactsData = [
 ];
 
 const addContact = (newName) => {
-    
+
     const section = newName.charAt(0).toUpperCase();
     const index = contactsData.findIndex(x => x.title === section);
     const toAdd = [newName];

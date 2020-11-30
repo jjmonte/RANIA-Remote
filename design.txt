@@ -1,0 +1,28 @@
+APP DESIGN GUIDE
+
+This text file outlies, plainly the basic colors, and fonts of the app. This is intended as development reference, rather than user reference.
+
+TITLE BAR GUIDE:
+
+    Settings:   Save (Left)         Contacts (Right)
+    Contacts:   Settings (Left)     Add Contact (Right)
+    Call:       Back (Left)         Emergency Call (Right) (if Visitor)
+    Emergency:  Back (Left)         ---
+
+APP FONT:           Merriweather Regular (400 weight, serif)
+
+ACCESSIBLE Font:    Helvetica Neue Bold  (sans serif)
+
+APP COLORS: 
+
+    Green FG:           #257933
+    Offwhite BG:        #f0f0ea
+    Black FG:           #000000
+    Contact Select FG:  #C8F5FF
+
+ADA (Dark Mode) COLORS:
+
+    DARK GREY BG:       #323232
+    Green FG:           #36B048 
+    White FG:           #FFFFFF
+    Contact Select FG:  #1D5D27

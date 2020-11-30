@@ -23,6 +23,7 @@ import { Settings } from './Settings.component.js';
 import { Call } from './Call.component.js';
 import { Emergency } from './Emergency.component.js';
 
+// Export custom fonts, to be used across app. This is not imported to other files because functional components were used.
 export default () => {
   let [fontsLoaded] = useFonts({
     Merriweather_300Light,
@@ -35,14 +36,14 @@ export default () => {
     Merriweather_900Black_Italic,
   });
 
-  //                                             // FOR DEMO
-  // LogBox.ignoreLogs(['Warning: ...']);        // Ignore log notification by message
-  // LogBox.ignoreAllLogs();                     // Ignore all log notifications
-
   let fontSize = 24;
   let paddingVertical = 6;
 
-  const TitleBar = ({ colorMode, fontMode, styleExtra, onPress, appState, newContactOnPress }) => {
+  // TITLE BAR / TOP BAR / NAVIGATION BAR
+  // This component displays the persisting Title Bar which is shown on all screens of the app.
+  // On the title bar are navigation buttons which enable the user to traverse the app's various screens such as settings, contacts, call, etc.
+
+  const TitleBar = ({ colorMode, styleExtra, onPress, appState, userMode, newContactOnPress }) => {
     // TOP BAR / TITLE BAR / NAV BAR
     // PERSISTS ON ALL VIEWS OF APP + CONTAINS ICONS TO NAVIGATE VARIOUS APP SCREENS
     if (appState == "contacts") {
@@ -63,12 +64,23 @@ export default () => {
         </View>
       );
     }
-    else if (appState == "call") {
+    // VISITOR MODE, SHOW EMERGENCY BUTTON
+    else if (appState == "call" && userMode == false) {
       return (
         <View style={[styles.titleBar, styleExtra.title]}>
           <TouchableOpacity onPress={onPress.contacts}><FontAwesomeIcon icon={faLongArrowAltLeft} color={colorMode} /></TouchableOpacity>
           <Text style={[styles.title, styleExtra.title]}>RANIA Remote</Text>
           <TouchableOpacity onPress={onPress.emergency}><FontAwesomeIcon icon={faExclamationTriangle} color={'#C54E3E'} /></TouchableOpacity>
+        </View>
+      );
+    }
+    // VISITEE MODE, HIDE EMERGENCY BUTTON
+    else if (appState == "call" && userMode == true) {
+      return (
+        <View style={[styles.titleBar, styleExtra.title]}>
+          <TouchableOpacity onPress={onPress.contacts}><FontAwesomeIcon icon={faLongArrowAltLeft} color={colorMode} /></TouchableOpacity>
+          <Text style={[styles.title, styleExtra.title]}>RANIA Remote</Text>
+          <TouchableOpacity></TouchableOpacity>
         </View>
       );
     }
@@ -83,11 +95,15 @@ export default () => {
     }
   }
 
+  // PRIMARY APP COMPONENT:
+  // This is the primary entry point to the application and is where parent states are created, then passed down to child components.
+  // This includes states such as the current user mode of the app, the current app page to be displayed, as well as the contacts list and settings.
+
   const App = () => {
 
-    const [userMode, setUserMode] = useState(1);                      // 0 = visitor
-    const [currentScreen, setCurrentScreen] = useState("call");      // which app screen is open?  settings, contacts, call
-    const [activeCall, setActiveCall] = useState(null);                   // is there an active call? (may not be used)
+    const [userMode, setUserMode] = useState(1);                          // 0 = visitor
+    const [currentScreen, setCurrentScreen] = useState("call");           // which app screen is open?  settings, contacts, call
+    // const [activeCall, setActiveCall] = useState(null);                // is there an active call? (may not be used)
     const [highVisFonts, setHighVisFonts] = useState(false);              // toggle high visibility fonts
 
     const [contacts, setContacts] = useState(contactsData);
@@ -214,7 +230,7 @@ export default () => {
         <View style={[styles.container, styleExtra.accent]}>
           <View style={[styles.statusBar, styleExtra.title]} />
           <TitleBar colorMode={colorsAccent} styleExtra={styleExtra}
-            appState={currentScreen} onPress={onPress} extraData={darkMode} />
+            appState={currentScreen} userMode={userMode} onPress={onPress} extraData={darkMode} />
           <Call userMode={userMode} styleExtra={styleExtra} />
         </View>
       )
@@ -229,9 +245,9 @@ export default () => {
         </View>
       )
     }
-
   }
 
+  // IF FONTS AREN'T LOADED, DISPLAY LOADING SCREEN
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {

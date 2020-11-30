@@ -5,6 +5,21 @@ import { faPhone, faPen, faCheck, faTimes } from '@fortawesome/free-solid-svg-ic
 
 import { addContact, getContacts } from './Storage.js';
 
+// CONTACTS LIST COMPONENT:
+//
+// THIS FILE CONTAINS A _FAMILY_ OF COMPONENTS WHICH RENDER THE LIST OF CONTACTS
+// EACH CONTACT IS RENDERED AS AN 'ITEM' COMPONENT, WITH VARIABLE DISPLAY STYLE DEPENDING ON
+// IF IT IS SELECTED OR BEING EDITED
+//
+// THE LIST COMPONENT DISPLAYS EACH ITEM, SORTED INTO ALPHABETICAL SECTIONS (SORTING IS DONE IN Storage.js)
+// WHEN PRESSING A CONTACT'S NAME, THE ITEM IS HIGHLIGHTED AND A 'PENCIL' AND 'PHONE' ICON ARE SHOWN TO THE RIGHT
+// SELECTING THE 'PENCIL' ICON RE-RENDERS THE ITEM AND CHANGES THE TEXT TO
+// A TextInput COMPONENT, WHICH IS AUTO SELECTED, ALLOWING EDITS TO BE TYPED IN
+// WHILE EDITING, THE OPTIONS AT RIGHT CHANGE -- TO AN 'X' AND A 'CHECKMARK' --
+// PRESSING 'X' CANCELS EDITING, PRESSING 'CHECKMARK' SAVES THE EDIT AND CHANGES THE CONTACTS ARRAY
+//
+// SOME EXTRA COMPONENTS ARE USED TO ENABLE RE-RENDERING WHEN LIST DATA CHANGES OR WHEN A CONTACT IS SELECTED, ETC.
+
 const Item = ({ item, itemSelected, onPress, style, showOptions, disableTouch, optionEdit, optionCall, styleExtra }) => {
     if (itemSelected == true) {
         return (
@@ -45,7 +60,7 @@ const Item = ({ item, itemSelected, onPress, style, showOptions, disableTouch, o
     }
 };
 
-const EditItem = ({ item, styleExtra, style, showOptions, disableTouch, optionEdit, onChangeEdit, cancelEdit, saveEdit}) => (
+const EditItem = ({ item, styleExtra, style, showOptions, disableTouch, optionEdit, onChangeEdit, cancelEdit, saveEdit }) => (
     <View style={[styles.container, styleExtra.mono]}>
         <View style={style}>
             <View style={styles.itemContainer}>

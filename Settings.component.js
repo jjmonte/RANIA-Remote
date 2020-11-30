@@ -1,15 +1,14 @@
 import React, { useState, useRef, Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
+// SETTINGS COMPONENT:
+//
+// This component displays the settings page, which allows for toggling of (currently) 3 user settings:
+// User Mode (are you a visitor or visitee), 
+// Dark/High Contrast Mode (for those with certain color contrast needs or preferences),
+// and High Visibility Fonts [Helvetica] (for the elderly or those with dyslexia, who may have difficulty reading the Merriweather serif font)
+
 const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode, highVisFonts, setHighVisFonts }) => {
-
-    // const [darkEnabled, setDarkEnabled] = useState(false);
-    const [fontsEnabled, setFontsEnabled] = useState(false);
-
-    // const toggleDark = () => setDarkEnabled(previousState => !previousState);
-    const toggleFonts = () => {
-        setFontsEnabled(previousState => !previousState);
-    }
 
     const userModeLabel = userMode ? 'Visitee' : 'Visitor';
 
@@ -20,8 +19,8 @@ const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode, hi
                 <View style={[styles.setting, styleExtra.accent]}>
                     <Text style={[styles.label, styleExtra.mono]}>User Mode: {userModeLabel}</Text>
                     <Switch
-                        trackColor={{ false: "#767577", true: "#f0f0ea" }}
-                        thumbColor={userMode ? "#257933" : "#f4f3f4"}
+                        trackColor={{ false: "#767577", true: "#f4f3f4" }}
+                        thumbColor={userMode ? styleExtra.accent.color : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={setUserMode}
                         value={userMode}
@@ -30,8 +29,8 @@ const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode, hi
                 <View style={[styles.setting, styleExtra.accent]}>
                     <Text style={[styles.label, styleExtra.mono]}>High Contrast (Dark) Mode</Text>
                     <Switch
-                        trackColor={{ false: "#767577", true: "#f0f0ea" }}
-                        thumbColor={darkMode ? "#36B048" : "#f4f3f4"}
+                        trackColor={{ false: "#767577", true: "#f4f3f4" }}
+                        thumbColor={darkMode ? styleExtra.accent.color : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={setDarkMode}
                         value={darkMode}
@@ -40,8 +39,8 @@ const Settings = ({ styleExtra, userMode, setUserMode, darkMode, setDarkMode, hi
                 <View style={[styles.setting, styleExtra.accent]}>
                     <Text style={[styles.label, styleExtra.mono]}>Improve Text Visibility</Text>
                     <Switch
-                        trackColor={{ false: "#767577", true: "#f0f0ea" }}
-                        thumbColor={fontsEnabled ? "#257933" : "#f4f3f4"}
+                        trackColor={{ false: "#767577", true: "#f4f3f4" }}
+                        thumbColor={highVisFonts ? styleExtra.accent.color : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={setHighVisFonts}
                         value={highVisFonts}

@@ -1,5 +1,7 @@
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// POTENTIAL ASYNCHRONOUS, LOCAL STORAGE OF USER SETTINGS + CONTACTS, CURRENTLY NON-FUNCTIONAL AND UNUSED
+
 // const getContacts = async () => {
 //     try {
 //         var contacts = await AsyncStorage.getItem('contacts')

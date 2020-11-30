@@ -6,28 +6,29 @@ import { Text, Dimensions, ScrollView, View, StyleSheet, TouchableOpacity, Secti
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 // import { faPhone, faPen, faCheck, faOutdent, faPlusCircle, faPlusSquare, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
+// CALL COMPONENT:
+//
 // THIS COMPONENT IS A PLACEHOLDER/TEMPLATE FOR FUTURE WORK
-// INCLUDING THE IMPLEMENTATION OF REMOTE->BLUETOOTH->HARDWARE CONTROLS
+// INCLUDING THE IMPLEMENTATION OF VISITOR->INTERNET->BLUETOOTH->HARDWARE CONTROLS
 // FOR THE RANIA REMOTE'S ROBOTIC BASE
 // 
-// WHILE THIS COMPONENT WILL BE RENDERED, BUT PROVIDES NO FUNCTIONALITY IN ITS CURRENT STATE
+// WHILE THIS COMPONENT WILL BE RENDERED, IT PROVIDES NO FUNCTIONALITY IN ITS CURRENT STATE
 // THE 'CONTROLLER' ON THIS COMPONENT DOES NOT FUNCTION, IT IS ONLY A MOCKUP IMAGE
+// 
 
 // Helper code to calculate image width for mockup images
-
 const window = Dimensions.get('window');
 const ratio = window.width / 1200;
 
 const Call = ({ userMode, styleExtra }) => {
+
+    // DISPLAY IF VISITOR MODE
     if (userMode == false) {
         return (
             <View style={styles.container}>
                 <View>
                     <View style={styles.headerContainer}>
-                        {/* <TouchableOpacity><FontAwesomeIcon color={'#000000'} icon={faCircle} style={styles.icon} size={25} /></TouchableOpacity> */}
-
                         <Text style={styles.header}>― Sam Rydzynski ―</Text>
-
                     </View>
                     <Image style={styles.visitor} source={require('./assets/visitee.jpg')}></Image>
                     <View style={styles.smallCallControls}>
@@ -40,6 +41,8 @@ const Call = ({ userMode, styleExtra }) => {
             </View>
         )
     }
+
+    // DISPLAY IF VISITEE MODE
     else {
         return (
             <View style={styles.container}>
@@ -47,9 +50,10 @@ const Call = ({ userMode, styleExtra }) => {
                     <View style={styles.headerContainer}>
                         <Text style={styles.header}>― Jade Montesano ―</Text>
                     </View>
-                    <Image style={styles.visitor} source={require('./assets/visitee.jpg')}></Image>
+                    <Image style={styles.visitor} source={require('./assets/visitor.png')}></Image>
                 </View>
                 <View style={styles.callControlsContainer}>
+                    {/* CALL CONTROLS, ADD FUNCTIONALITY (DISABLE ROBOT, MUTE, DISABLE VIDEO, respectively) */}
                     <TouchableOpacity><FontAwesomeIcon size={40} style={styles.iconControl} color={styleExtra.accent.color} icon={faEyeSlash} /></TouchableOpacity>
                     <TouchableOpacity><FontAwesomeIcon size={40} style={styles.iconControl} color={styleExtra.accent.color} icon={faMicrophoneSlash} /></TouchableOpacity>
                     <TouchableOpacity><FontAwesomeIcon size={40} style={styles.iconControl} color={styleExtra.accent.color} icon={faVideoSlash} /></TouchableOpacity>
@@ -59,7 +63,6 @@ const Call = ({ userMode, styleExtra }) => {
             </View>
         )
     }
-
 }
 
 const styles = StyleSheet.create({
