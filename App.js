@@ -102,7 +102,7 @@ export default () => {
   const App = () => {
 
     const [userMode, setUserMode] = useState(1);                          // 0 = visitor
-    const [currentScreen, setCurrentScreen] = useState("call");           // which app screen is open?  settings, contacts, call
+    const [currentScreen, setCurrentScreen] = useState("contacts");       // which app screen is open?  settings, contacts, call
     // const [activeCall, setActiveCall] = useState(null);                // is there an active call? (may not be used)
     const [highVisFonts, setHighVisFonts] = useState(false);              // toggle high visibility fonts
 
